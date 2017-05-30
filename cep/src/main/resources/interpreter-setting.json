@@ -1,0 +1,12 @@
+[
+  {
+    "group": "cep",
+    "name": "receiver",
+    "className": "org.apache.zeppelin.cep.ReceiverInterpreter",
+    "defaultInterpreter": true,
+    "properties": {},
+    "editor": {
+      "editOnDblClick": false
+    }
+  }
+]

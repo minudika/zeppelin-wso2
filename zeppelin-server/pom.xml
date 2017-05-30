@@ -77,6 +77,12 @@
         <artifactId>scalap</artifactId>
         <version>${scala.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.zeppelin</groupId>
+        <artifactId>zeppelin-cep-servlets</artifactId>
+        <version>0.7.2-SNAPSHOT</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

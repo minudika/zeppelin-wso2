@@ -31,6 +31,16 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+  <servlet>
+    <servlet-name>upload</servlet-name>
+    <servlet-class>org.wso2.cep.servlet.FileUploadServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>upload</servlet-name>
+    <url-pattern>/uploadservlet</url-pattern>
+  </servlet-mapping>
+
 	<context-param>
 		<param-name>configuration</param-name>
 		<param-value>deployment</param-value>
