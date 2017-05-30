@@ -30,22 +30,92 @@ function readData(){
 
         var firstLine = text.split('\n').shift(); // first line
         document.getElementById("content").value = firstLine;
-        console.log(firstLine);                   // use the console for debugging
+        console.log(firstLine); // use the console for debugging
+
+        var attributeValues = firstLine.split(",");
+        for(i=0;i<attributeValues.length;i++){
+        	console.log(attributeValues[i]);
+        }
+
+       	addTable(attributeValues);
     }
 
     reader.readAsText(document.getElementById('uploadedFile').files[0], 'UTF-8');             // or whatever encoding you're using
                                                   // UTF-8 is default, so this argument
 }
+
+function addTable(attributeValues){
+		var attributeTypes = ["int", "long", "float", "double", "bool", "string"];
+        var myTableDiv = document.getElementById("streamData");
+        var table = document.createElement('TABLE')
+        var tableBody = document.createElement('TBODY')
+        table.appendChild(tableBody);
+
+        var tr = document.createElement('TR');
+        var td = document.createElement('TD');
+        td.appendChild(document.createTextNode('Sample value    :'));
+        tr.appendChild(td);
+
+        for(i=0;i<attributeValues.length;i++){
+        	var td = document.createElement('TD');
+        	td.appendChild(document.createTextNode(attributeValues[i]));
+        	tr.appendChild(td);
+        }
+        tableBody.appendChild(tr);
+
+        tr = document.createElement('TR');
+        td = document.createElement('TD');
+        td.appendChild(document.createTextNode('Attribute Type  :'));
+        tr.appendChild(td);
+
+        for(i=0;i<attributeValues.length;i++){
+        	var td = document.createElement('TD');
+        	var selectList = document.createElement("select");
+        	var option = document.createElement("option");
+
+        	selectList.setAttribute("id", ("select"+i));
+
+        	for(j=0;j<attributeTypes.length;j++){
+        		var option = document.createElement("option");
+    			option.setAttribute("value", attributeTypes[j]);
+   				option.text = attributeTypes[j];
+    			selectList.appendChild(option);
+        	}
+        	td.appendChild(selectList);
+        	tr.appendChild(td);
+        }
+        tableBody.appendChild(tr);
+
+        tr = document.createElement('TR');
+        td = document.createElement('TD');
+        td.appendChild(document.createTextNode('Attribute Name :'));
+        tr.appendChild(td);
+
+        for(i=0;i<attributeValues.length;i++){
+        	var td = document.createElement('TD');
+
+        	var inputText = document.createElement("input");
+        	inputText.setAttribute("id", ("attributeName"+i));
+
+        	td.appendChild(inputText);
+        	tr.appendChild(td);
+        }
+        tableBody.appendChild(tr);
+
+        myTableDiv.appendChild(table);
+}
 </script>
-<h3>File Upload:</h3>
+
 Select a file to upload: <br />
 <form action="uploadservlet" method="post"
       enctype="multipart/form-data">
+    Stream Name : <input type="text" id="streamName">
+    <br />
     <input type="file" id="uploadedFile" name="file" size="50" onchange="readData()"/>
-    <!-- <input type='button' value='select' onclick='loadFileAsText()'/>
-     --><br />
+    <br />
+    <div id="streamData"></div>
+
     <input type="submit" value="Upload File" />
 </form>
-<input type="text" id="content" value="content">
 </body>
 </html>
