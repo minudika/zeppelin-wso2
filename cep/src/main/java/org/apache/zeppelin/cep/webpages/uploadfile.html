@@ -1,0 +1,51 @@
+<html>
+<head>
+    <title>File Uploading Form</title>
+</head>
+
+<body>
+<script type="text/javascript">
+  function loadFileAsText(){
+  //var content;
+  var fileToLoad = document.getElementById("uploadedFile").files[0];
+  console.log(fileToLoad.toString());
+
+  var fileReader = new FileReader();
+  fileReader.onload = function(fileLoadedEvent){
+      var textFromFileLoaded = fileLoadedEvent.target.result;
+      console.log(textFromFileLoaded);
+      document.getElementById("content").value = textFromFileLoaded;
+  };
+
+  fileReader.readAsText(fileToLoad, "UTF-8");
+}
+
+function readData(){
+    var input  = document.getElementById('uploadedFile'); // get the input
+    var file   = input.files[0];                  // assuming single file, no multiple
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+        var text = reader.result;                 // the entire file
+
+        var firstLine = text.split('\n').shift(); // first line
+        document.getElementById("content").value = firstLine;
+        console.log(firstLine);                   // use the console for debugging
+    }
+
+    reader.readAsText(document.getElementById('uploadedFile').files[0], 'UTF-8');             // or whatever encoding you're using
+                                                  // UTF-8 is default, so this argument
+}
+</script>
+<h3>File Upload:</h3>
+Select a file to upload: <br />
+<form action="uploadservlet" method="post"
+      enctype="multipart/form-data">
+    <input type="file" id="uploadedFile" name="file" size="50" onchange="readData()"/>
+    <!-- <input type='button' value='select' onclick='loadFileAsText()'/>
+     --><br />
+    <input type="submit" value="Upload File" />
+</form>
+<input type="text" id="content" value="content">
+</body>
+</html>

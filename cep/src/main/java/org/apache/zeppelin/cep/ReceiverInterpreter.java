@@ -27,11 +27,15 @@ import org.apache.zeppelin.cep.beans.EventProcessor;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Properties;
 
 public class ReceiverInterpreter extends Interpreter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReceiverInterpreter.class);
+
 
     public ReceiverInterpreter(Properties property) {
         super(property);
@@ -50,7 +54,9 @@ public class ReceiverInterpreter extends Interpreter {
     @Override
     public InterpreterResult interpret(String st, InterpreterContext context) {
         System.err.println("**************************Receiver interpreter : interpret() hit");
-       // EventProcessor eventProcessor = new EventProcessor();
+        LOGGER.info("**************************Receiver interpreter : interpret() hit");
+
+        // EventProcessor eventProcessor = new EventProcessor();
         String html = "";
         String testHtml2 = "<html>\n" +
                 "<head>\n" +
@@ -84,29 +90,34 @@ public class ReceiverInterpreter extends Interpreter {
                 "  fileReader.onload = function(fileLoadedEvent){\n" +
                 "      var textFromFileLoaded = fileLoadedEvent.target.result;\n" +
                 "      console.log(textFromFileLoaded);\n" +
-                "      //document.getElementById(\"content\").value = textFromFileLoaded;\n" +
+                "      document.getElementById(\"content\").value = textFromFileLoaded;\n" +
                 "  };\n" +
                 "\n" +
                 "  fileReader.readAsText(fileToLoad, \"UTF-8\");\n" +
                 "}\n" +
                 "\n" +
-                " var openFile = function(event) {\n" +
-                "    var input = event.target;\n" +
-                "\n" +
+                "function readData(){\n" +
+                "    var input  = document.getElementById('uploadedFile'); // get the input\n" +
+                "    var file   = input.files[0];                  // assuming single file, no multiple\n" +
                 "    var reader = new FileReader();\n" +
-                "    reader.onload = function(){\n" +
-                "      var text = reader.result;\n" +
-                "      console.log(reader.result.substring(0, 200));\n" +
-                "    };\n" +
-                "    reader.readAsText(input.files[0]);\n" +
-                "  };\n" +
                 "\n" +
+                "    reader.onload = function(e) {\n" +
+                "        var text = reader.result;                 // the entire file\n" +
+                "\n" +
+                "        var firstLine = text.split('\\n').shift(); // first line \n" +
+                "        document.getElementById(\"content\").value = firstLine;\n" +
+                "        console.log(firstLine);                   // use the console for debugging\n" +
+                "    }\n" +
+                "\n" +
+                "    reader.readAsText(file, 'UTF-8');             // or whatever encoding you're using\n" +
+                "                                                  // UTF-8 is default, so this argument \n" +
+                "}      \n" +
                 "</script>\n" +
                 "<h3>File Upload:</h3>\n" +
                 "Select a file to upload: <br />\n" +
                 "<form action=\"uploadservlet\" method=\"post\"\n" +
                 "                        enctype=\"multipart/form-data\">\n" +
-                "<input type=\"file\" id=\"uploadedFile\" name=\"file\" size=\"50\" onchange=\"openFile(event)\"/>\n" +
+                "<input type=\"file\" id=\"uploadedFile\" name=\"file\" size=\"50\" onchange=\"readData()\"/>\n" +
                 "<!-- <input type='button' value='select' onclick='loadFileAsText()'/>\n" +
                 " --><br />\n" +
                 "<input type=\"submit\" value=\"Upload File\" />\n" +
@@ -119,24 +130,32 @@ public class ReceiverInterpreter extends Interpreter {
         StringBuilder sb = new StringBuilder();
         StringBuffer stringBuffer = new StringBuffer();
 
-        File file = new File("../resources/webpages/uploadfile.html");
-        try {
-            BufferedReader b = new BufferedReader(new FileReader(file));
+        String filepath = "/home/minudika/Projects/Apache/zeppelin_0.5.6/zeppelin/cep/src/main/java/org/apache/zeppelin/cep/webpages/uploadfile.html";
 
-            System.err.println("Reading file using Buffered Reader");
+        //File file = new File("../resources/webpages/uploadfile.html");
+        LOGGER.info("***************************** checked");
+
+        try {
+            LOGGER.info("***************************** checked2");
+
+            BufferedReader b = new BufferedReader(new FileReader(filepath));
+
+            LOGGER.info("*****************************Reading file using Buffered Reader");
             String readLine = "";
             while ((readLine = b.readLine()) != null) {
                 html += readLine;
                 stringBuffer.append(readLine);
                 stringBuffer.append('\n');
             }
+
+            LOGGER.info("************************"+stringBuffer.toString());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
-        return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.HTML,testHtml);
+        return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.HTML,stringBuffer.toString());
     }
 
     @Override
