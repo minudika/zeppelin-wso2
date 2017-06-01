@@ -8,5 +8,15 @@
     "editor": {
       "editOnDblClick": false
     }
+  },
+  {
+    "group": "cep",
+    "name": "siddhi",
+    "className": "org.apache.zeppelin.cep.SiddhiInterpreter",
+    "defaultInterpreter": true,
+    "properties": {},
+    "editor": {
+      "editOnDblClick": false
+    }
   }
 ]

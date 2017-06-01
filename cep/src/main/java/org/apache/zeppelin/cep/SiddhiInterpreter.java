@@ -26,6 +26,7 @@ package org.apache.zeppelin.cep;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
+import org.wso2.cep.beans.DataHolderBean;
 
 import java.util.Properties;
 
@@ -47,11 +48,9 @@ public class SiddhiInterpreter extends Interpreter {
 
     @Override
     public InterpreterResult interpret(String st, InterpreterContext context) {
-
-        int x = 10;
-        System.out.println(st);
-
-        return new InterpreterResult(InterpreterResult.Code.INCOMPLETE, InterpreterResult.Type.HTML,st);
+        DataHolderBean dataHolderBean = DataHolderBean.getDataHolderBean();
+        dataHolderBean.addExecutionPlan(st);
+        return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.HTML,"Execution completed.");
     }
 
     @Override

@@ -23,7 +23,7 @@ package org.wso2.cep.servlet;/*
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.zeppelin.cep.beans.DataHolderBean;
+import org.wso2.cep.beans.DataHolderBean;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +56,8 @@ public class FileUploadServlet extends HttpServlet {
                        HttpServletResponse response)
             throws ServletException, IOException {
 
-        dataHolderBean = new DataHolderBean();
+        dataHolderBean = DataHolderBean.getDataHolderBean();
+        dataHolderBean.clear();
         // Check that we have a file upload request
         isMultipart = ServletFileUpload.isMultipartContent(request);
         response.setContentType("text/html");

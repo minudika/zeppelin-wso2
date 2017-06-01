@@ -19,6 +19,7 @@
 package org.apache.zeppelin.cep.beans;
 
 import org.apache.log4j.Logger;
+import org.wso2.cep.beans.DataHolderBean;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -26,59 +27,57 @@ import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.EventPrinter;
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by minudika on 13/4/17.
  */
 public class EventProcessor {
     static final Logger log = Logger.getLogger(EventProcessor.class);
-    public int count = 0;
-    public String flag = "none";
-    public HashMap<String,String> registeredStreams;
-    private SiddhiManager siddhiManager;
+    String streamDefinition;
+    String query;
+    SiddhiManager siddhiManager;
+    int numberOfData = 0;
+    DataHolderBean dataHolderBean;
+    ArrayList<Object> outputData;
+    ExecutionPlanRuntime executionPlanRuntime;
+    String[] attributeNames;
+    ArrayList<Attribute.Type> attributeTypes;
+    ArrayList<Object[]> attribtueValues;
+    List<Attribute> attributeList;
 
     public EventProcessor(){
-        siddhiManager = new SiddhiManager();
-        registeredStreams = new HashMap<String, String>();
+        dataHolderBean = DataHolderBean.getDataHolderBean();
+        this.streamDefinition = dataHolderBean.getStreamDefinition();
+        this.query = dataHolderBean.getQuery();
+        SiddhiManager siddhiManager = new SiddhiManager();
+        executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(streamDefinition + query);
     }
-    public void run(String executionPlan) throws InterruptedException {
-        String inStreamDefinition = "" +
-                "define stream inputStream (symbol string, price string, volume string);";
-        String query = ("@info(name = 'query1') " +
-                "from inputStream select symbol "+
-                "insert into outputStream;");
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(executionPlan);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback() {
+    public void process(String streamName) throws InterruptedException {
+        attributeNames = executionPlanRuntime.getStreamDefinitionMap()
+                .get(streamName).getAttributeNameArray();
+
+        attributeList = executionPlanRuntime.getStreamDefinitionMap()
+                .get(streamName).getAttributeList();
+        for(Attribute attribute : attributeList){
+            attributeTypes.add(attribute.getType());
+        }
+
+        executionPlanRuntime.addCallback(streamName, new StreamCallback() {
             @Override
-            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                EventPrinter.print(timeStamp, inEvents, removeEvents);
-
-
-                for(int cnt=0;cnt<inEvents.length;cnt++){
-                    count++;
-                    log.info("Event : " + count + ",currentDate : " + inEvents[cnt].getData(1));
+            public void receive(Event[] events) {
+                for(Event event : events){
+                    attribtueValues.add(event.getData());
                 }
             }
         });
 
-
-        String params[] = null;
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("inputStream");
-        executionPlanRuntime.start();
-        flag = params[0];
-        inputHandler.send(new Object[]{params[0], 700f, 100l});
         Thread.sleep(100);
         executionPlanRuntime.shutdown();
-    }
-
-    public void registerStream(String streamID, String streamDef){
-        registeredStreams.put(streamID,streamDef);
     }
 }
