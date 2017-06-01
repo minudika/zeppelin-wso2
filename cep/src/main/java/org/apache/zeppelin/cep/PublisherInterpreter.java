@@ -23,6 +23,7 @@ package org.apache.zeppelin.cep;
  * Created by minudika on 10/4/17.
  */
 
+import org.apache.zeppelin.cep.beans.EventProcessor;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
@@ -47,9 +48,13 @@ public class PublisherInterpreter extends Interpreter {
 
     @Override
     public InterpreterResult interpret(String st, InterpreterContext context) {
+        EventProcessor eventProcessor = new EventProcessor();
+        try {
+            eventProcessor.publish(st);
 
-        int x = 10;
-        System.out.println(st);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return new InterpreterResult(InterpreterResult.Code.INCOMPLETE, InterpreterResult.Type.HTML,st);
     }

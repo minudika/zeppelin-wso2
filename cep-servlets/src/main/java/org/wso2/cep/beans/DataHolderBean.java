@@ -36,6 +36,7 @@ public class DataHolderBean {
     public static String  STREAM_ATTRIBUTE_NAME_PREFIX = "attributeName";
     public static String STREAM_ATTRIBUTE_TYPE_PREFIX = "select";
     public String inputDataFile;
+
     private  static DataHolderBean dataHolderBean = new DataHolderBean();
 
     private  DataHolderBean(){
@@ -100,6 +101,7 @@ public class DataHolderBean {
     public String getQuery(){
         return query;
     }
+
 
     public String generateStreamDefinition(){
         StringBuilder sb = new StringBuilder();

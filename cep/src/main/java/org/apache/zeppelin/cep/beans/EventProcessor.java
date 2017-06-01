@@ -30,6 +30,9 @@ import org.wso2.siddhi.core.util.EventPrinter;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,12 +61,13 @@ public class EventProcessor {
         executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(streamDefinition + query);
     }
 
-    public void process(String streamName) throws InterruptedException {
+    public void publish(String streamName) throws InterruptedException {
         attributeNames = executionPlanRuntime.getStreamDefinitionMap()
                 .get(streamName).getAttributeNameArray();
 
         attributeList = executionPlanRuntime.getStreamDefinitionMap()
                 .get(streamName).getAttributeList();
+
         for(Attribute attribute : attributeList){
             attributeTypes.add(attribute.getType());
         }
@@ -77,7 +81,78 @@ public class EventProcessor {
             }
         });
 
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(dataHolderBean.getInputDataFile()));
+            InputHandler inputHandler = executionPlanRuntime.getInputHandler(dataHolderBean.getStreamName());
+
+            String line = "";
+            while((line = bufferedReader.readLine()) != null){
+                String[] data = line.trim().split(",");
+                Object[] objects = new Object[data.length];
+                int i=0;
+                for(String d : data){
+                    objects[i] = convertAttribute(d,attributeTypes.get(i));
+                    i++;
+                }
+                inputHandler.send(objects);
+                Thread.sleep(10);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         Thread.sleep(100);
         executionPlanRuntime.shutdown();
+    }
+
+    public void publish2(){
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(dataHolderBean.getInputDataFile()));
+            InputHandler inputHandler = executionPlanRuntime.getInputHandler(dataHolderBean.getStreamName());
+
+            String line = "";
+            while((line = bufferedReader.readLine()) != null){
+                String[] data = line.trim().split(",");
+                Object[] objects = new Object[data.length];
+                int i=0;
+                for(String d : data){
+                    objects[i] = convertAttribute(d,attributeTypes.get(i));
+                    i++;
+                }
+                inputHandler.send(objects);
+                Thread.sleep(10);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Object convertAttribute(String attributeValue, Attribute.Type type){
+        switch (type){
+            case INT:
+                return Integer.parseInt(attributeValue);
+            case LONG:
+                return Long.parseLong(attributeValue);
+            case FLOAT:
+                return Float.parseFloat(attributeValue);
+            case DOUBLE:
+                return Double.parseDouble(attributeValue);
+            case BOOL:
+                return Boolean.parseBoolean(attributeValue);
+            default:
+                return attributeValue;
+        }
+    }
+
+    public ArrayList<Object[]> getAttributeValueList(){
+        return attribtueValues;
     }
 }
