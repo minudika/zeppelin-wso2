@@ -23,6 +23,7 @@ package org.wso2.cep.servlet;/*
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.zeppelin.cep.beans.DataHolderBean;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class FileUploadServlet extends HttpServlet {
     private int maxFileSize = 50 * 1024;
     private int maxMemSize = 4 * 1024;
     private File file ;
+    private DataHolderBean dataHolderBean;
 
     public void init( ){
         // Get the file location where it would be stored.
@@ -53,6 +55,8 @@ public class FileUploadServlet extends HttpServlet {
     public void doPost(HttpServletRequest request,
                        HttpServletResponse response)
             throws ServletException, IOException {
+
+        dataHolderBean = new DataHolderBean();
         // Check that we have a file upload request
         isMultipart = ServletFileUpload.isMultipartContent(request);
         response.setContentType("text/html");
@@ -91,6 +95,7 @@ public class FileUploadServlet extends HttpServlet {
             out.println("<title>Servlet upload</title>");
             out.println("</head>");
             out.println("<body>");
+
             while ( i.hasNext () )
             {
                 FileItem fi = (FileItem)i.next();
@@ -112,6 +117,8 @@ public class FileUploadServlet extends HttpServlet {
                     }
                     fi.write( file ) ;
                     out.println("Uploaded Filename: " + fileName + "<br>");
+                } else{
+                    setStreamAttributes(fi);
                 }
             }
             out.println("</body>");
@@ -128,5 +135,20 @@ public class FileUploadServlet extends HttpServlet {
 
         throw new ServletException("GET method used with " +
                 getClass( ).getName( )+": POST method required.");
+    }
+
+    private void setStreamAttributes(FileItem item){
+        String name = item.getFieldName();
+        String value = item.getString();
+
+        System.err.println("field name : "+name+" , value : "+value);
+
+        if(DataHolderBean.STREAM_NAME_IDENTIFIER.equals(name)){
+            dataHolderBean.setStreamName(value);
+        } else if(name.contains(DataHolderBean.STREAM_ATTRIBUTE_NAME_PREFIX)){
+            dataHolderBean.addStramAttributeName(value);
+        } else if(name.contains(DataHolderBean.STREAM_ATTRIBUTE_TYPE_PREFIX)){
+            dataHolderBean.addStramAttributeType(value);
+        }
     }
 }

@@ -14,7 +14,6 @@
   fileReader.onload = function(fileLoadedEvent){
       var textFromFileLoaded = fileLoadedEvent.target.result;
       console.log(textFromFileLoaded);
-      document.getElementById("content").value = textFromFileLoaded;
   };
 
   fileReader.readAsText(fileToLoad, "UTF-8");
@@ -29,7 +28,6 @@ function readData(){
         var text = reader.result;                 // the entire file
 
         var firstLine = text.split('\n').shift(); // first line
-        document.getElementById("content").value = firstLine;
         console.log(firstLine); // use the console for debugging
 
         var attributeValues = firstLine.split(",");
@@ -74,6 +72,7 @@ function addTable(attributeValues){
         	var option = document.createElement("option");
 
         	selectList.setAttribute("id", ("select"+i));
+        	selectList.setAttribute("name", ("select"+i));
 
         	for(j=0;j<attributeTypes.length;j++){
         		var option = document.createElement("option");
@@ -96,6 +95,7 @@ function addTable(attributeValues){
 
         	var inputText = document.createElement("input");
         	inputText.setAttribute("id", ("attributeName"+i));
+        	inputText.setAttribute("name", ("attributeName"+i));
 
         	td.appendChild(inputText);
         	tr.appendChild(td);
@@ -109,7 +109,7 @@ function addTable(attributeValues){
 Select a file to upload: <br />
 <form action="uploadservlet" method="post"
       enctype="multipart/form-data">
-    Stream Name : <input type="text" id="streamName">
+    Stream Name : <input type="text" id="streamName" name="streamName">
     <br />
     <input type="file" id="uploadedFile" name="file" size="50" onchange="readData()"/>
     <br />
