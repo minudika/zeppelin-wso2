@@ -24,6 +24,7 @@ package org.apache.zeppelin.cep;
  */
 
 import org.apache.zeppelin.cep.beans.EventProcessor;
+import org.apache.zeppelin.cep.server.Server;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
@@ -53,6 +54,14 @@ public class ReceiverInterpreter extends Interpreter {
 
     @Override
     public InterpreterResult interpret(String st, InterpreterContext context) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new Server().start();
+            }
+        }).start();
+
         System.err.println("**************************Receiver interpreter : interpret() hit");
         LOGGER.info("**************************Receiver interpreter : interpret() hit");
 
@@ -148,7 +157,7 @@ public class ReceiverInterpreter extends Interpreter {
                 stringBuffer.append('\n');
             }
 
-            LOGGER.info("************************"+stringBuffer.toString());
+            //LOGGER.info("************************"+stringBuffer.toString());
         } catch (FileNotFoundException e) {
             LOGGER.error(e.getMessage());
         } catch (IOException e) {

@@ -8,13 +8,13 @@ import java.util.ArrayList;
  * Created by minudika on 1/6/17.
  */
 public class Visualizer {
-    EventProcessor eventProcessor;
+    /*EventProcessor eventProcessor;
     ArrayList<Object[]> attributeValueList;
     ArrayList<String> attributeNames;
-    DataHolderBean dataHolderBean;
+    InterpreterDataHolder dataHolderBean;
     public Visualizer(EventProcessor eventProcessor){
         this.eventProcessor = eventProcessor;
-        dataHolderBean = DataHolderBean.
+        dataHolderBean = InterpreterDataHolder.
 
     }
 
@@ -26,5 +26,5 @@ public class Visualizer {
         for(Object[] objects : attributeValueList){
 
         }
-    }
+    }*/
 }

@@ -24,6 +24,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.wso2.cep.beans.DataHolderBean;
+import org.wso2.cep.server.Server;
+import org.wso2.cep.client.Client;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,12 +46,20 @@ public class FileUploadServlet extends HttpServlet {
     private int maxMemSize = 4 * 1024;
     private File file ;
     private DataHolderBean dataHolderBean;
+    private Client client;
 
     public void init( ){
         // Get the file location where it would be stored.
         System.err.println("************************************************servlet checked");
         /*filePath =
                 getServletContext().getInitParameter("file-upload");*/
+        final Server server = new Server();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                server.start();
+            }
+        }).start();
 
     }
     public void doPost(HttpServletRequest request,
@@ -122,12 +132,17 @@ public class FileUploadServlet extends HttpServlet {
                     setStreamAttributes(fi);
                 }
             }
+            String server = "localhost";
+            int port = 5253;
+            int containerPort = 8095;
+            new Client(server, port, containerPort).send();
+
             out.println("</body>");
             out.println("</html>");
             //response.sendRedirect(request.getRequestURI());
 
         }catch(Exception ex) {
-            System.out.println(ex);
+            System.err.println(ex);
         }
     }
     public void doGet(HttpServletRequest request,
@@ -152,4 +167,6 @@ public class FileUploadServlet extends HttpServlet {
             dataHolderBean.addStramAttributeType(value);
         }
     }
+
+
 }

@@ -81,7 +81,6 @@
     <module>zeppelin-server</module>
     <module>zeppelin-distribution</module>
     <module>cep-servlets</module>
-    <module>cep-beans</module>
   </modules>
 
   <properties>
