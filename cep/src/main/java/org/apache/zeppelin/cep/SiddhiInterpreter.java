@@ -23,6 +23,7 @@ package org.apache.zeppelin.cep;
  * Created by minudika on 10/4/17.
  */
 
+import org.apache.zeppelin.cep.beans.InterpreterDataHolder;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
@@ -48,8 +49,10 @@ public class SiddhiInterpreter extends Interpreter {
 
     @Override
     public InterpreterResult interpret(String st, InterpreterContext context) {
-        DataHolderBean dataHolderBean = DataHolderBean.getDataHolderBean();
-        dataHolderBean.addExecutionPlan(st);
+        /*InterpreterDataHolder dataHolderBean = DataHolderBean.getDataHolderBean();
+        dataHolderBean.addExecutionPlan(st);*/
+        InterpreterDataHolder interpreterDataHolder = InterpreterDataHolder.getInterpreterDataHolder();
+        interpreterDataHolder.addExecutionPlan(st);
         return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.HTML,"Execution completed.");
     }
 

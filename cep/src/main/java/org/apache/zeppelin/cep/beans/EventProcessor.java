@@ -19,14 +19,11 @@
 package org.apache.zeppelin.cep.beans;
 
 import org.apache.log4j.Logger;
-import org.wso2.cep.beans.DataHolderBean;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
-import org.wso2.siddhi.core.util.EventPrinter;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 import java.io.BufferedReader;
@@ -45,31 +42,31 @@ public class EventProcessor {
     String query;
     SiddhiManager siddhiManager;
     int numberOfData = 0;
-    DataHolderBean dataHolderBean;
+    InterpreterDataHolder interpreterDataHolder;
     ArrayList<Object> outputData;
     ExecutionPlanRuntime executionPlanRuntime;
-    String[] attributeNames;
-    ArrayList<Attribute.Type> attributeTypes;
+    String[] outputStreamAttributeNames;
+    ArrayList<Attribute.Type> outputStreamAttributeTypes;
     ArrayList<Object[]> attribtueValues;
-    List<Attribute> attributeList;
+    List<Attribute> outputStreamAttributeList;
 
     public EventProcessor(){
-        dataHolderBean = DataHolderBean.getDataHolderBean();
-        this.streamDefinition = dataHolderBean.getStreamDefinition();
-        this.query = dataHolderBean.getQuery();
+        interpreterDataHolder = InterpreterDataHolder.getInterpreterDataHolder();
+        this.streamDefinition = interpreterDataHolder.getStreamDefinition();
+        this.query = interpreterDataHolder.getQuery();
         SiddhiManager siddhiManager = new SiddhiManager();
         executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(streamDefinition + query);
     }
 
     public void publish(String streamName) throws InterruptedException {
-        attributeNames = executionPlanRuntime.getStreamDefinitionMap()
+        outputStreamAttributeNames = executionPlanRuntime.getStreamDefinitionMap()
                 .get(streamName).getAttributeNameArray();
 
-        attributeList = executionPlanRuntime.getStreamDefinitionMap()
+        outputStreamAttributeList = executionPlanRuntime.getStreamDefinitionMap()
                 .get(streamName).getAttributeList();
 
-        for(Attribute attribute : attributeList){
-            attributeTypes.add(attribute.getType());
+        for(Attribute attribute : outputStreamAttributeList){
+            outputStreamAttributeTypes.add(attribute.getType());
         }
 
         executionPlanRuntime.addCallback(streamName, new StreamCallback() {
@@ -82,8 +79,8 @@ public class EventProcessor {
         });
 
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(dataHolderBean.getInputDataFile()));
-            InputHandler inputHandler = executionPlanRuntime.getInputHandler(dataHolderBean.getStreamName());
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(interpreterDataHolder.getInputDataFile()));
+            InputHandler inputHandler = executionPlanRuntime.getInputHandler(interpreterDataHolder.getStreamName());
 
             String line = "";
             while((line = bufferedReader.readLine()) != null){
@@ -91,7 +88,7 @@ public class EventProcessor {
                 Object[] objects = new Object[data.length];
                 int i=0;
                 for(String d : data){
-                    objects[i] = convertAttribute(d,attributeTypes.get(i));
+                    objects[i] = convertAttribute(d, outputStreamAttributeTypes.get(i));
                     i++;
                 }
                 inputHandler.send(objects);
@@ -111,8 +108,8 @@ public class EventProcessor {
 
     public void publish2(){
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(dataHolderBean.getInputDataFile()));
-            InputHandler inputHandler = executionPlanRuntime.getInputHandler(dataHolderBean.getStreamName());
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(interpreterDataHolder.getInputDataFile()));
+            InputHandler inputHandler = executionPlanRuntime.getInputHandler(interpreterDataHolder.getStreamName());
 
             String line = "";
             while((line = bufferedReader.readLine()) != null){
@@ -120,7 +117,7 @@ public class EventProcessor {
                 Object[] objects = new Object[data.length];
                 int i=0;
                 for(String d : data){
-                    objects[i] = convertAttribute(d,attributeTypes.get(i));
+                    objects[i] = convertAttribute(d, outputStreamAttributeTypes.get(i));
                     i++;
                 }
                 inputHandler.send(objects);

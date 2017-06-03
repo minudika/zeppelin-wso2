@@ -149,8 +149,7 @@ public class FileUploadServlet extends HttpServlet {
                       HttpServletResponse response)
             throws ServletException, IOException {
 
-        throw new ServletException("GET method used with " +
-                getClass( ).getName( )+": POST method required.");
+        System.err.println("iframe checked");
     }
 
     private void setStreamAttributes(FileItem item){

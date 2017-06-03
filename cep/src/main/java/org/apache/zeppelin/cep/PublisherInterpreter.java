@@ -24,11 +24,14 @@ package org.apache.zeppelin.cep;
  */
 
 import org.apache.zeppelin.cep.beans.EventProcessor;
+import org.apache.zeppelin.cep.beans.Visualizer;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 
 import java.util.Properties;
+
+import sun.awt.X11.Visual;
 
 public class PublisherInterpreter extends Interpreter {
 
@@ -49,14 +52,18 @@ public class PublisherInterpreter extends Interpreter {
     @Override
     public InterpreterResult interpret(String st, InterpreterContext context) {
         EventProcessor eventProcessor = new EventProcessor();
+        Visualizer visualizer;
+        String tableString = null;
         try {
             eventProcessor.publish(st);
-
+            visualizer = new Visualizer(eventProcessor);
+            tableString = visualizer.generateCode();
+            logger.info(tableString);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        return new InterpreterResult(InterpreterResult.Code.INCOMPLETE, InterpreterResult.Type.HTML,st);
+        return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.HTML,tableString);
     }
 
     @Override

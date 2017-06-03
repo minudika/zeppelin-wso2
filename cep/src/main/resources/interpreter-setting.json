@@ -18,5 +18,15 @@
     "editor": {
       "editOnDblClick": false
     }
+  },
+  {
+    "group": "cep",
+    "name": "publisher",
+    "className": "org.apache.zeppelin.cep.PublisherInterpreter",
+    "defaultInterpreter": true,
+    "properties": {},
+    "editor": {
+      "editOnDblClick": false
+    }
   }
 ]

@@ -32,10 +32,10 @@ function readData(){
 
         var attributeValues = firstLine.split(",");
         for(i=0;i<attributeValues.length;i++){
-        	console.log(attributeValues[i]);
+            console.log(attributeValues[i]);
         }
 
-       	addTable(attributeValues);
+        addTable(attributeValues);
     }
 
     reader.readAsText(document.getElementById('uploadedFile').files[0], 'UTF-8');             // or whatever encoding you're using
@@ -43,7 +43,7 @@ function readData(){
 }
 
 function addTable(attributeValues){
-		var attributeTypes = ["int", "long", "float", "double", "bool", "string"];
+        var attributeTypes = ["int", "long", "float", "double", "bool", "string"];
         var myTableDiv = document.getElementById("streamData");
         var table = document.createElement('TABLE')
         var tableBody = document.createElement('TBODY')
@@ -55,9 +55,9 @@ function addTable(attributeValues){
         tr.appendChild(td);
 
         for(i=0;i<attributeValues.length;i++){
-        	var td = document.createElement('TD');
-        	td.appendChild(document.createTextNode(attributeValues[i]));
-        	tr.appendChild(td);
+            var td = document.createElement('TD');
+            td.appendChild(document.createTextNode(attributeValues[i]));
+            tr.appendChild(td);
         }
         tableBody.appendChild(tr);
 
@@ -67,21 +67,21 @@ function addTable(attributeValues){
         tr.appendChild(td);
 
         for(i=0;i<attributeValues.length;i++){
-        	var td = document.createElement('TD');
-        	var selectList = document.createElement("select");
-        	var option = document.createElement("option");
+            var td = document.createElement('TD');
+            var selectList = document.createElement("select");
+            var option = document.createElement("option");
 
-        	selectList.setAttribute("id", ("select"+i));
-        	selectList.setAttribute("name", ("select"+i));
+            selectList.setAttribute("id", ("select"+i));
+            selectList.setAttribute("name", ("select"+i));
 
-        	for(j=0;j<attributeTypes.length;j++){
-        		var option = document.createElement("option");
-    			option.setAttribute("value", attributeTypes[j]);
-   				option.text = attributeTypes[j];
-    			selectList.appendChild(option);
-        	}
-        	td.appendChild(selectList);
-        	tr.appendChild(td);
+            for(j=0;j<attributeTypes.length;j++){
+                var option = document.createElement("option");
+                option.setAttribute("value", attributeTypes[j]);
+                option.text = attributeTypes[j];
+                selectList.appendChild(option);
+            }
+            td.appendChild(selectList);
+            tr.appendChild(td);
         }
         tableBody.appendChild(tr);
 
@@ -91,14 +91,14 @@ function addTable(attributeValues){
         tr.appendChild(td);
 
         for(i=0;i<attributeValues.length;i++){
-        	var td = document.createElement('TD');
+            var td = document.createElement('TD');
 
-        	var inputText = document.createElement("input");
-        	inputText.setAttribute("id", ("attributeName"+i));
-        	inputText.setAttribute("name", ("attributeName"+i));
+            var inputText = document.createElement("input");
+            inputText.setAttribute("id", ("attributeName"+i));
+            inputText.setAttribute("name", ("attributeName"+i));
 
-        	td.appendChild(inputText);
-        	tr.appendChild(td);
+            td.appendChild(inputText);
+            tr.appendChild(td);
         }
         tableBody.appendChild(tr);
 
@@ -107,7 +107,7 @@ function addTable(attributeValues){
 </script>
 
 Select a file to upload: <br />
-<form action="uploadservlet" method="post"
+<form action="uploadservlet" method="post" target="iframe"
       enctype="multipart/form-data">
     Stream Name : <input type="text" id="streamName" name="streamName">
     <br />
@@ -117,5 +117,6 @@ Select a file to upload: <br />
 
     <input type="submit" value="Upload File" />
 </form>
+<iframe name="iframe" src="uploadservlet" style="display:none"></iframe>
 </body>
 </html>

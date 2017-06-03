@@ -8,13 +8,13 @@ import java.util.ArrayList;
  * Created by minudika on 1/6/17.
  */
 public class Visualizer {
-    /*EventProcessor eventProcessor;
+    EventProcessor eventProcessor;
     ArrayList<Object[]> attributeValueList;
     ArrayList<String> attributeNames;
-    InterpreterDataHolder dataHolderBean;
+    InterpreterDataHolder interpreterDataHolder;
     public Visualizer(EventProcessor eventProcessor){
         this.eventProcessor = eventProcessor;
-        dataHolderBean = InterpreterDataHolder.
+        interpreterDataHolder = InterpreterDataHolder.getInterpreterDataHolder();
 
     }
 
@@ -22,9 +22,17 @@ public class Visualizer {
         StringBuilder sb = new StringBuilder();
         int i=0;
         sb.append("\"\"\"");
-        sb.append()
-        for(Object[] objects : attributeValueList){
-
+        for(i=0;i<eventProcessor.outputStreamAttributeNames.length-1;i++){
+            sb.append(eventProcessor.outputStreamAttributeNames[i]).append("\t");
         }
-    }*/
+        sb.append(eventProcessor.outputStreamAttributeNames[i]).append("\n");
+        for(Object[] objects : attributeValueList){
+            for(Object object : objects){
+                sb.append(object.toString()).append("\t");
+            }
+            sb.replace(sb.length()-1,sb.length(),"\n");
+        }
+        sb.append("\"\"\"");
+        return sb.toString();
+    }
 }
