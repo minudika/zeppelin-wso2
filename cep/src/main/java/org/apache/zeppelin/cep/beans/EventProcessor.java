@@ -18,7 +18,8 @@
 
 package org.apache.zeppelin.cep.beans;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -37,7 +38,7 @@ import java.util.List;
  * Created by minudika on 13/4/17.
  */
 public class EventProcessor {
-    static final Logger log = Logger.getLogger(EventProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventProcessor.class);
     String streamDefinition;
     String query;
     SiddhiManager siddhiManager;
@@ -55,7 +56,22 @@ public class EventProcessor {
         this.streamDefinition = interpreterDataHolder.getStreamDefinition();
         this.query = interpreterDataHolder.getQuery();
         SiddhiManager siddhiManager = new SiddhiManager();
+        LOGGER.info("*****************"+streamDefinition+query);
+        System.err.println("*****************"+streamDefinition + query);
+
+        //************************
+        /*String streams = "\n" +
+                "@Plan:name('TestExecutionPlan')" +
+                "@source(type='inMemory')" +
+                "define stream inputStream (company string, price int, volume long);" ;
+        String query2 = "\n" +
+                "from inputStream " +
+                "select * " +
+                "insert into outputStream;\n";*/
+        //************************
+
         executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(streamDefinition + query);
+        //executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(streams + query2);
     }
 
     public void publish(String streamName) throws InterruptedException {
@@ -78,6 +94,8 @@ public class EventProcessor {
             }
         });
 
+
+        executionPlanRuntime.start();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(interpreterDataHolder.getInputDataFile()));
             InputHandler inputHandler = executionPlanRuntime.getInputHandler(interpreterDataHolder.getStreamName());

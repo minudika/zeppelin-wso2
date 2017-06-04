@@ -128,6 +128,7 @@ public class FileUploadServlet extends HttpServlet {
                     }
                     fi.write( file ) ;
                     out.println("Uploaded Filename: " + fileName + "<br>");
+                    dataHolderBean.setInputDataFile(filePath+fileName);
                 } else{
                     setStreamAttributes(fi);
                 }

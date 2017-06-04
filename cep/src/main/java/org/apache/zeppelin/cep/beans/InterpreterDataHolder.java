@@ -27,7 +27,7 @@ public class InterpreterDataHolder {
     private  ArrayList<String> streamAttributeNames;
     private  ArrayList<String> streamAttributeTypes;
     private  String streamName;
-    private String streamDefinition;
+    private String streamDefinition = null;
     private String executionPlan;
     private String queryName;
     private String query;
@@ -106,19 +106,26 @@ public class InterpreterDataHolder {
     public String generateStreamDefinition(){
         StringBuilder sb = new StringBuilder();
         String stream = "" +
-                "@Plan:name('ExecutionPlan')" +
+                "@Plan:name('ExecutionPlan') " +
                 "define stream "+streamName+" (";
 
-        sb.append(sb);
-        for(int i=0;i<streamAttributeTypes.size();i++){
+        sb.append(stream);
+        int i=0;
+        for(i=0;i<streamAttributeTypes.size()-1;i++){
             sb.append(streamAttributeNames.get(i))
                     .append(" ")
                     .append(streamAttributeTypes.get(i))
                     .append(", ");
         }
-        sb.append(")");
+        sb.append(streamAttributeNames.get(i))
+                .append(" ")
+                .append(streamAttributeTypes.get(i));
+        sb.append(" ); ");
         streamDefinition = sb.toString();
+
+
         return sb.toString();
+        //return streams+query;
     }
 
     public String getStreamDefinition(){
