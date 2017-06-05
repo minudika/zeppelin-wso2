@@ -43,8 +43,11 @@ public class Client {
 
             System.err.println("servlet client : sending data..");
             channel.write(format("streamName"));
+            channel.flush();
             channel.write(format("fileURI"));
+            channel.flush();
             channel.write(format("attributeNames"));
+            channel.flush();
             channel.write(format("attributeTypes"));
             channel.flush();
             System.err.println("servlet client : sending data finished.");
@@ -75,6 +78,6 @@ public class Client {
         } else if("fileURI".equals(key)){
             sb.append("fileURI>").append(dataHolderBean.getInputDataFile());
         }
-        return sb.append("\n").toString();
+        return sb.append("|\n").toString();
     }
 }

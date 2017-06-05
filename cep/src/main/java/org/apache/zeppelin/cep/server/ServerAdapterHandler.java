@@ -39,26 +39,34 @@ public class ServerAdapterHandler extends
     public void channelRead(ChannelHandlerContext arg0, Object arg1)
             throws Exception {
         InterpreterDataHolder interpreterDataHolder = InterpreterDataHolder.getInterpreterDataHolder();
-        String s = arg1.toString();
+        //String s = arg1.toString();
         LOGGER.info("interpreter server : channelRead -> "+arg1.toString());
-        if(s.contains("streamName")){
-            interpreterDataHolder.setStreamName(s.trim());
-            LOGGER.info("interpreter server : "+ s);
-        } else if(s.contains("attributeNames")){
-            System.err.println("interpreter server : "+ s);
-            String[] names = s.trim().split(">");
-            for(int i=1;i<names.length;i++){
-                interpreterDataHolder.addStramAttributeName(names[i]);
+        String[] msgs = arg1.toString().split("\\|");
+        LOGGER.info(msgs.toString());
+        for(String s : msgs) {
+            if (s.contains("streamName")) {
+                String[] names = s.trim().split(">");
+                interpreterDataHolder.setStreamName(names[1].trim());
+                LOGGER.info("interpreter server : streamName checked -> " + s);
+            } else if (s.contains("attributeNames")) {
+                LOGGER.info("interpreter server : attributeNamesChecked -> " + arg1.toString());
+                System.err.println("interpreter server : " + s);
+                String[] names = s.trim().split(">");
+                for (int i = 1; i < names.length; i++) {
+                    interpreterDataHolder.addStramAttributeName(names[i]);
+                    LOGGER.info("interpreter server :  added " + names[i] + " to attributeNames");
+                }
+            } else if (s.contains("attributeTypes")) {
+                LOGGER.info("interpreter server : attributeTypes checked -> " + s);
+                String[] types = s.trim().split(">");
+                for (int i = 1; i < types.length; i++) {
+                    interpreterDataHolder.addStramAttributeType(types[i]);
+                    LOGGER.info("interpreter server :  added " + types[i] + " to attributeTypes");
+                }
+            } else if (s.contains("fileURI")) {
+                LOGGER.info("interpreter server : fileURI checkd -> " + s);
+                interpreterDataHolder.setInputDataFile(s.split(">")[1].trim());
             }
-        } else if(s.contains("attributeTypes")){
-            LOGGER.info("interpreter server : "+ s);
-            String[] types = s.trim().split(">");
-            for(int i=1;i<types.length;i++){
-                interpreterDataHolder.addStramAttributeType(types[i]);
-            }
-        } else if(s.contains("fileURI")){
-            LOGGER.info("interpreter server : "+ s);
-            interpreterDataHolder.setInputDataFile(s.split(">")[1].trim());
         }
     }
 

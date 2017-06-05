@@ -41,7 +41,6 @@ public class EventProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventProcessor.class);
     String streamDefinition;
     String query;
-    SiddhiManager siddhiManager;
     int numberOfData = 0;
     InterpreterDataHolder interpreterDataHolder;
     ArrayList<Object> outputData;
@@ -51,20 +50,23 @@ public class EventProcessor {
     ArrayList<Object[]> attribtueValues;
     List<Attribute> outputStreamAttributeList;
 
-    public EventProcessor(){
+    public EventProcessor() {
         interpreterDataHolder = InterpreterDataHolder.getInterpreterDataHolder();
         this.streamDefinition = interpreterDataHolder.getStreamDefinition();
         this.query = interpreterDataHolder.getQuery();
+        outputStreamAttributeTypes = new ArrayList<Attribute.Type>();
+        attribtueValues = new ArrayList<Object[]>();
         SiddhiManager siddhiManager = new SiddhiManager();
         LOGGER.info("*****************"+streamDefinition+query);
         System.err.println("*****************"+streamDefinition + query);
 
         //************************
-        /*String streams = "\n" +
-                "@Plan:name('TestExecutionPlan')" +
-                "@source(type='inMemory')" +
+        /*String streams = "\n"+
+                "@Plan:name('TestExecutionPlan') " +
+                "@source(type='inMemory') " +
                 "define stream inputStream (company string, price int, volume long);" ;
-        String query2 = "\n" +
+
+        String query2 = "\n"+
                 "from inputStream " +
                 "select * " +
                 "insert into outputStream;\n";*/
@@ -85,7 +87,7 @@ public class EventProcessor {
             outputStreamAttributeTypes.add(attribute.getType());
         }
 
-        executionPlanRuntime.addCallback(streamName, new StreamCallback() {
+        executionPlanRuntime.addCallback("outputStream", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
                 for(Event event : events){

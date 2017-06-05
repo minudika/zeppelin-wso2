@@ -52,7 +52,8 @@ public class SiddhiInterpreter extends Interpreter {
         /*InterpreterDataHolder dataHolderBean = DataHolderBean.getDataHolderBean();
         dataHolderBean.addExecutionPlan(st);*/
         InterpreterDataHolder interpreterDataHolder = InterpreterDataHolder.getInterpreterDataHolder();
-        interpreterDataHolder.addExecutionPlan(st);
+        //interpreterDataHolder.addExecutionPlan(st);
+        interpreterDataHolder.addQuery(st);
         return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.HTML,"Execution completed.");
     }
 

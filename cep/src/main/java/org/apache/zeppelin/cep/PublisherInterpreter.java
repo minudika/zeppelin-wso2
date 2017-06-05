@@ -63,7 +63,7 @@ public class PublisherInterpreter extends Interpreter {
             e.printStackTrace();
         }
 
-        return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.HTML,tableString);
+        return new InterpreterResult(InterpreterResult.Code.SUCCESS, InterpreterResult.Type.TABLE,tableString);
     }
 
     @Override

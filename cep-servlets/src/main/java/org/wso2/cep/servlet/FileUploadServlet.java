@@ -41,7 +41,8 @@ import javax.servlet.http.HttpServletResponse;
 public class FileUploadServlet extends HttpServlet {
 
     private boolean isMultipart;
-    private String filePath = "/home/minudika/uploads/";
+    //private String filePath = "/home/minudika/uploads/";
+    private String filePath = "../../../../uploads";
     private int maxFileSize = 50 * 1024;
     private int maxMemSize = 4 * 1024;
     private File file ;
